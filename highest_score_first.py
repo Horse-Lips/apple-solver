@@ -1,5 +1,5 @@
+from utils import populate_queue
 from boards import *
-import moves
 from queue import PriorityQueue
 import numpy as np
 
@@ -15,11 +15,8 @@ def highest_score_first(board, print_board=False):
         int: Final score for the board
     """
     board = np.array(board)
-    move_list = moves.get_moves(board)
     move_queue = PriorityQueue()
-
-    for move in move_list:
-        move_queue.put(move)
+    populate_queue(board, move_queue)
 
     score = 0
 
@@ -42,7 +39,7 @@ def highest_score_first(board, print_board=False):
             if print_board:
                 print("REFRESHING MOVE QUEUE")
 
-            moves.get_moves(board)
+            populate_queue(board, move_queue)
 
     return score
 
