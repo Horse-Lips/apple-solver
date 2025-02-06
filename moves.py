@@ -2,29 +2,39 @@ import numpy as np
 
 
 class Move:
-    def __init__(self, score, coordinate):
+    def __init__(self, score: int, coordinate: tuple[slice, slice]):
         """
         Basic class for handling moves.
         Args:
             score: The score of the move
-            coordinate: Tuple containing top left, bottom right coordinate
+            coordinate: Tuple containing index slices from top left to bottom right coordinate
         """
         self.score = score
         self.coordinate = coordinate
 
+    def __eq__(self, other):
+        return self.score == other.score
 
-def _get_horizontal(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
+    def __lt__(self, other):
+        return self.score < other.score
+
+    def __gt__(self, other):
+        return self.score > other.score
+
+
+def _get_horizontal(board: np.ndarray, v_index: int, h_index: int, move_list: list[Move], v_offset: int = 1,
+                    h_offset: int = 1) -> None:
     """
         Get moves from coordinate expanding horizontally.
         Expands vertically when a selection sum < 10.
     Args:
         Args:
-        board (ndarray): Board as a numpy 2D array
-        v_index (int): Board column index to start from
-        h_index (int): Board row index to start from
-        move_list (list): List of moves initially empty
-        v_offset (int): Board column offset for second index
-        h_offset (int): Board row offset for second index
+        board: Board as a numpy 2D array
+        v_index: Board column index to start from
+        h_index: Board row index to start from
+        move_list: List of moves initially empty
+        v_offset: Board column offset for second index
+        h_offset: Board row offset for second index
     Returns:
         None
     """
@@ -44,17 +54,18 @@ def _get_horizontal(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
             return
 
 
-def _get_vertical(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
+def _get_vertical(board: np.ndarray, v_index: int, h_index: int, move_list: list[Move], v_offset: int = 1,
+                  h_offset: int = 1) -> None:
     """
     Get moves from coordinate expanding vertically.
     Expands horizontally when a selection sum < 10.
     Args:
-        board (ndarray): Board as a numpy 2D array
-        v_index (int): Board column index to start from
-        h_index (int): Board row index to start from
-        move_list (list): List of moves initially empty
-        v_offset (int): Board column offset for second index
-        h_offset (int): Board row offset for second index
+        board: Board as a numpy 2D array
+        v_index: Board column index to start from
+        h_index: Board row index to start from
+        move_list: List of moves initially empty
+        v_offset: Board column offset for second index
+        h_offset: Board row offset for second index
     Returns:
         None
     """
@@ -75,13 +86,13 @@ def _get_vertical(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
 
 
 # Main function to iterate over each element and check all directions
-def get_moves(board):
+def get_moves(board: np.ndarray) -> list[Move]:
     """
     Get all currently available moves for the given board.
     Args:
-        board (ndarray): Board as a numpy 2D array
+        board: Board as a numpy 2D array
     Returns:
-        list: A list of moves. Moves are tuples containing negated score and move coordinates
+        A list of Moves
     """
     move_list = []
     for v_index in range(board.shape[0]):  # Vertical indices
