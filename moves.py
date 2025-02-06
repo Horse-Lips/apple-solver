@@ -1,6 +1,18 @@
 import numpy as np
 
 
+class Move:
+    def __init__(self, score, coordinate):
+        """
+        Basic class for handling moves.
+        Args:
+            score: The score of the move
+            coordinate: Tuple containing top left, bottom right coordinate
+        """
+        self.score = score
+        self.coordinate = coordinate
+
+
 def _get_horizontal(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
     """
         Get moves from coordinate expanding horizontally.
@@ -16,18 +28,20 @@ def _get_horizontal(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
     Returns:
         None
     """
-    result = np.sum(board[v_index:v_index + v_offset, h_index:h_index + h_offset])
-
-    while 0 < result < 10 and h_index + h_offset < board.shape[1]:
+    while h_index + h_offset < board.shape[1]:
         h_offset += 1
         result = np.sum(board[v_index:v_index + v_offset, h_index:h_index + h_offset])
 
         if result == 10:
             coord_1 = slice(v_index, v_index + v_offset)
             coord_2 = slice(h_index, h_index + h_offset)
-            move_list.append((-np.sum(board[coord_1, coord_2] > 0), (coord_1, coord_2)))
+            score = np.sum(board[coord_1, coord_2] > 0)
+
+            move_list.append(Move(score, (coord_1, coord_2)))
         elif result < 10 and v_offset == 1:
             _get_vertical(board, v_index, h_index, move_list, v_offset, h_offset)
+        else:
+            return
 
 
 def _get_vertical(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
@@ -44,18 +58,20 @@ def _get_vertical(board, v_index, h_index, move_list, v_offset=1, h_offset=1):
     Returns:
         None
     """
-    result = np.sum(board[v_index:v_index + v_offset, h_index:h_index + h_offset])
-
-    while 0 < result < 10 and v_index + v_offset < board.shape[0]:
+    while v_index + v_offset < board.shape[0]:
         v_offset += 1
         result = np.sum(board[v_index:v_index + v_offset, h_index:h_index + h_offset])
 
         if result == 10:
             coord_1 = slice(v_index, v_index + v_offset)
             coord_2 = slice(h_index, h_index + h_offset)
-            move_list.append((-np.sum(board[coord_1, coord_2] > 0), (coord_1, coord_2)))
+            score = np.sum(board[coord_1, coord_2] > 0)
+
+            move_list.append(Move(score, (coord_1, coord_2)))
         elif result < 10 and h_index == 1:
             _get_horizontal(board, v_index, h_index, move_list, v_offset, h_offset)
+        else:
+            return
 
 
 # Main function to iterate over each element and check all directions
