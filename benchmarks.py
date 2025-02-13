@@ -1,19 +1,18 @@
+import time
 from random import choice
 from typing import Callable
 
-from moves import get_moves
+from moves import get_moves, make_move
 from boards import *
 import numpy as np
 
 
-def benchmarks(board: list[list[int]], move_op: Callable) -> int:
+def benchmarks(board: list[list[int]] | np.ndarray, move_op: Callable) -> int:
     """
     Highest/lowest/random score first method depending on move_op.
-    Args:
-        board: Board as a regular or numpy 2D array
-        move_op: min/max/random.choice. Function given a list that returns an item from the list
-    Returns:
-        Final score for the board
+    :param board: Board as a regular or numpy 2D array
+    :param move_op: min/max/random.choice. Function given a list that returns an item from the list
+    :return: Final score for the board
     """
     board = np.array(board)
     move_list = get_moves(board)
@@ -21,8 +20,7 @@ def benchmarks(board: list[list[int]], move_op: Callable) -> int:
 
     while move_list:
         move = move_op(move_list)
-        board[move.coordinate[0], move.coordinate[1]] = 0
-        score += move.score
+        score += make_move(board, move)
         move_list = get_moves(board)
 
     return score
